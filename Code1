@@ -1,0 +1,50 @@
+#!mamba install pandas==1.3.3 -y
+#!mamba install requests==2.26.0 -y
+import glob
+import pandas as pd
+from datetime import datetime
+!wget https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0221EN-SkillsNetwork/labs/module%206/Lab%20-%20Extract%20Transform%20Load/data/bank_market_cap_1.json
+!wget https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0221EN-SkillsNetwork/labs/module%206/Lab%20-%20Extract%20Transform%20Load/data/bank_market_cap_2.json
+!wget https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0221EN-SkillsNetwork/labs/module%206/Final%20Assignment/exchange_rates.csv
+def extract_from_json(file_to_process):
+    dataframe = pd.read_json(file_to_process)
+    return dataframe
+    
+def extract():
+    df = pd.read_json("bank_market_cap_1.json")
+    return df
+print(extract().head(5))
+
+df = pd.read_csv('exchange_rates.csv')
+col1 = df["Unnamed: 0"]
+col2 = df["Rates"]
+row = 0
+for item in col1:
+  if(item == "GBP"):
+    break
+  row+=1
+exchange_rate = col2[row]
+print(exchange_rate)
+print(df)
+
+def transform(x):
+    df = pd.read_json("bank_market_cap_1.json")
+    i=0
+    for item in df["Market Cap (US$ Billion)"]:
+      df["Market Cap (US$ Billion)"][i] = item*x
+    return df
+print(transform(exchange_rate).head(5))
+
+def load(data):
+    data.to_csv("bank_market_cap_gbp.csv", index=False)
+load(df)
+
+import logging
+def log(data):
+    logger = logging.getLogger('data_logger')
+    log_file = 'data.log'
+    file_handler = logging.FileHandler(log_file)
+    logger.addHandler(file_handler)
+    logger.info(data)
+data = "Sample data"
+log(data)
